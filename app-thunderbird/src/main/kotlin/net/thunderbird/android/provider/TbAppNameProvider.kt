@@ -17,5 +17,6 @@ internal class TbAppNameProvider(
         context.getString(R.string.brand_name)
     }
 
-    override val filePrefix: String = "thunderbird"
+    // Mail fork: identify exported settings without changing the format.
+    override val filePrefix: String = "mail"
 }

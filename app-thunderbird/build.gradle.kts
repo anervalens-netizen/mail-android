@@ -1,3 +1,4 @@
+// Mail fork: own identity/version and existing no-funding integrations.
 plugins {
     id(ThunderbirdPlugins.App.androidCompose)
     alias(libs.plugins.dependency.guard)
@@ -13,13 +14,13 @@ android {
     namespace = "net.thunderbird.android"
 
     defaultConfig {
-        applicationId = "net.thunderbird.android"
-        testApplicationId = "net.thunderbird.android.tests"
+        applicationId = "eu.astancu.mail"
+        testApplicationId = "eu.astancu.mail.tests"
 
-        versionCode = 33
-        versionName = "24.0"
+        versionCode = 10000
+        versionName = "1.0.0"
 
-        buildConfigField("String", "CLIENT_INFO_APP_NAME", "\"Thunderbird for Android\"")
+        buildConfigField("String", "CLIENT_INFO_APP_NAME", "\"Mail\"")
     }
 
     androidResources {
@@ -254,7 +255,7 @@ dependencies {
     debugImplementation(projects.feature.autodiscovery.demo)
     "dailyImplementation"(projects.feature.autodiscovery.demo)
 
-    "fossImplementation"(projects.feature.funding.link)
+    "fossImplementation"(projects.feature.funding.noop)
 
     fullDebugImplementation(projects.feature.funding.googleplay)
     fullDailyImplementation(projects.feature.funding.googleplay)
@@ -264,7 +265,7 @@ dependencies {
     implementation(projects.feature.onboarding.migration.thunderbird)
     implementation(projects.feature.migration.launcher.thunderbird)
     implementation(projects.feature.thundermail.api)
-    implementation(projects.feature.thundermail.thunderbird)
+    implementation(projects.feature.thundermail.k9mail)
 
     // TODO remove once OAuth ids have been moved from TBD to TBA
     releaseImplementation(libs.appauth)

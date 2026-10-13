@@ -5,7 +5,7 @@
     <foreground>
         <inset
             android:drawable="@drawable/ic_app_logo"
-            android:inset="22%"
+            android:inset="2%"
             />
     </foreground>
     <monochrome>

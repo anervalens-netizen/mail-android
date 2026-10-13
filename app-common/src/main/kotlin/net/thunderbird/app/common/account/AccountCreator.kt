@@ -83,6 +83,7 @@ internal class AccountCreator(
         newAccount.isNotifyNewMail = account.options.showNotification
         newAccount.automaticCheckIntervalMinutes = account.options.checkFrequencyInMinutes
         newAccount.displayCount = account.options.messageDisplayCount
+        newAccount.applyMailPop3Defaults(account.incomingServerSettings.type)
 
         newAccount.deletePolicy = deletePolicyProvider.getDeletePolicy(newAccount.incomingServerSettings.type)
         newAccount.chipColor = accountColorPicker.pickColor()

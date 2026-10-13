@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mail fork: envelope silhouette for Android themed icons and notifications. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M22,44 L48,22 Q54,17 60,22 L86,44 Q89,47 89,53 L89,80 Q89,89 80,89 L28,89 Q19,89 19,80 L19,53 Q19,47 22,44 Z" />
+    <path android:fillColor="#FF000000" android:fillAlpha="0"
+        android:pathData="M22,44 L54,65 L86,44" />
+</vector>

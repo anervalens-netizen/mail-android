@@ -79,7 +79,9 @@
       "beta": {
         "display_in_app_notifications": true
       },
-      "release": {}
+      "release": {
+        "thundermail_onboarding_enabled": false
+      }
     },
     "k9": {
       "debug": {
