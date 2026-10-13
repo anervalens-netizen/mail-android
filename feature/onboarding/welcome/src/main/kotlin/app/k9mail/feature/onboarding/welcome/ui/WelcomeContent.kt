@@ -232,7 +232,7 @@ private fun WelcomeFooter(
         )
 
         TextBodySmall(
-            text = stringResource(R.string.onboarding_welcome_developed_by),
+            text = stringResource(R.string.onboarding_welcome_mail_attribution),
             modifier = Modifier
                 .padding(top = BoltTheme.spacings.quadruple)
                 .padding(horizontal = BoltTheme.spacings.double),

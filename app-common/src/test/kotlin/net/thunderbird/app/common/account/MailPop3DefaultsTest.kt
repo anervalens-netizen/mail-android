@@ -10,13 +10,13 @@ import org.junit.Test
 
 class MailPop3DefaultsTest {
     @Test
-    fun `POP3 keeps local mail after server removal without a message count limit`() {
+    fun `POP3 keeps local mail after server removal and respects the selected message count`() {
         val testSubject = newAccount()
 
         testSubject.applyMailPop3Defaults(Protocols.POP3)
 
         assertThat(testSubject.isSyncRemoteDeletions).isFalse()
-        assertThat(testSubject.displayCount).isEqualTo(0)
+        assertThat(testSubject.displayCount).isEqualTo(50)
     }
 
     @Test

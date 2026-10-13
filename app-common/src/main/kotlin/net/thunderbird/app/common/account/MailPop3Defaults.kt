@@ -7,6 +7,5 @@ import net.thunderbird.core.common.mail.Protocols
 internal fun LegacyAccountDto.applyMailPop3Defaults(protocol: String) {
     if (protocol == Protocols.POP3) {
         isSyncRemoteDeletions = false
-        displayCount = 0
     }
 }

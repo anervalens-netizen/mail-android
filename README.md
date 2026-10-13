@@ -7,7 +7,7 @@ Personal Android email client maintained by Andrei Stancu. Based on Thunderbird 
 - App name: **Mail**; Android package: `eu.astancu.mail`.
 - POP3, IMAP and SMTP with password/app-password authentication.
 - Local message search and multiple accounts are inherited from Thunderbird.
-- Newly created POP3 accounts keep local messages after server deletion and have no message-count limit. Imported accounts retain their imported settings.
+- Newly created POP3 accounts keep local messages after server deletion and default to **All messages** (no message-count limit). The setup screen lets you choose a smaller limit. Imported accounts retain their imported settings.
 - FOSS release uses the existing no-funding and no-telemetry integrations.
 - No Pro tier, in-app billing, donation prompts or Thundermail onboarding in the Mail FOSS release.
 - Own emerald/turquoise envelope launcher, themed and notification icons.
@@ -27,8 +27,10 @@ This fork does not reuse Thunderbird's OAuth client registrations. This release 
 JDK 21 and Android SDK 37. The release signing configuration is kept outside Git and referenced by ignored `.signing/tb.release.signing.properties`.
 
 ```sh
-./gradlew :app-thunderbird:assembleFossRelease -Ptb.useUploadKey=false
+./scripts/build-mail.sh
 ```
+
+The script bounds build memory and disables minification/resource shrinking for this personal release. The APK is a signed, non-debuggable release build.
 
 See [upstream documentation](docs/mail/UPSTREAM-README.md) and [development environment](docs/contributing/development-environment.md). Keep changes focused so upstream security fixes remain easy to merge.
 

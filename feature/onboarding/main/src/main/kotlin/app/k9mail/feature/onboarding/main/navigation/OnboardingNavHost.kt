@@ -64,7 +64,7 @@ fun OnboardingNavHost(
     ) {
         composable(route = NESTED_NAVIGATION_ROUTE_WELCOME) {
             WelcomeScreen(
-                onStartClick = { onFinish(OnboardingRoute.ThundermailAddAccount) },
+                onStartClick = { navController.navigateToAccountSetup() },
                 onImportClick = { navController.navigateToSettingsImport() },
                 appNameProvider = koinInject(),
             )

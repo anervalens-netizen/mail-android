@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.toImmutableList
 enum class EmailDisplayCount(
     val count: Int,
 ) {
+    ALL_MESSAGES(0),
     MESSAGES_10(10),
     MESSAGES_25(25),
     MESSAGES_50(50),

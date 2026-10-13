@@ -60,7 +60,7 @@
     },
     {
       "key": "thundermail_onboarding_enabled",
-      "default": true,
+      "default": false,
       "description": "Enables Thundermail onboarding flow.",
       "time_to_promote": "2026-12-31"
     }
@@ -79,9 +79,7 @@
       "beta": {
         "display_in_app_notifications": true
       },
-      "release": {
-        "thundermail_onboarding_enabled": false
-      }
+      "release": {}
     },
     "k9": {
       "debug": {
