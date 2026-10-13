@@ -32,6 +32,7 @@ class DefaultDisplayFolderRepository(
 ) : DisplayFolderRepository {
     private val sortForDisplay =
         compareByDescending<DisplayFolder> { it.folder.type == FolderType.INBOX }
+            .thenByDescending { it.folder.isLocalOnly && it.folder.type == FolderType.REGULAR }
             .thenByDescending { it.folder.type == FolderType.OUTBOX }
             .thenByDescending { it.folder.type != FolderType.REGULAR }
             .thenByDescending { it.isInTopGroup }

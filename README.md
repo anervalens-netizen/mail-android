@@ -26,6 +26,7 @@ Select the POP3 account, enter a sender email address and a local folder name, t
 The folder is created automatically, or an existing regular local folder with the same name is reused.
 Existing Inbox messages are processed immediately; future messages are processed after each successful sync.
 Stopping a rule keeps its folder and messages. Saving the same sender again updates its destination.
+From Mail 1.1.1, regular local folders appear directly below Inbox in the folder list.
 
 Rules and their folders are local to this installation; POP3 does not synchronize them to Outlook.
 The rule never deletes the server copy. Complete message data is required before moving, including attachments.
