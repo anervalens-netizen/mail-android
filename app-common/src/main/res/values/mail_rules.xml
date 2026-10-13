@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mail_rules_title">Folders and rules</string>
+    <string name="mail_rules_back">Back</string>
+    <string name="mail_rules_description">Move messages from an exact sender into a local folder after each POP3 sync. Saving also applies the rule to messages already in Inbox. Server copies stay available to Outlook.</string>
+    <string name="mail_rules_account">POP3 account</string>
+    <string name="mail_rules_sender">Sender email address</string>
+    <string name="mail_rules_folder">Local folder name</string>
+    <string name="mail_rules_save">Save and apply</string>
+    <string name="mail_rules_busy">Working… downloading any incomplete messages before moving them.</string>
+    <string name="mail_rules_no_accounts">Add a POP3 account to create local rules.</string>
+    <string name="mail_rules_active">Active rules</string>
+    <string name="mail_rules_rule">%1$s → %2$s</string>
+    <string name="mail_rules_remove">Stop rule</string>
+    <string name="mail_rules_removed">Rule stopped. The folder and its messages are kept.</string>
+    <string name="mail_rules_missing_folder">Folder unavailable — save the rule again</string>
+    <string name="mail_rules_invalid">Enter one complete email address and a folder name of 1–100 characters, without slashes or line breaks.</string>
+    <string name="mail_rules_folder_conflict">That name belongs to a special or server folder. Choose another local folder name.</string>
+    <string name="mail_rules_error">The operation could not finish. Check the account and try again. Any saved rules remain visible when you reopen this screen.</string>
+    <string name="mail_rules_result">Rule saved. Messages moved: %1$d. Still in Inbox: %2$d (retried at the next sync).</string>
+    <string name="mail_rules_footer">Folders appear in the account folder list and exist only on this device. Stopping a rule keeps its folder and messages. Rules are stored on this device and are not included in settings exports.</string>
+</resources>

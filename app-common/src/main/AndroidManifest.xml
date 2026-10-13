@@ -37,6 +37,16 @@
 
         </activity>
 
+        <activity
+            android:name=".rules.MailRulesActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="net.thunderbird.mail.action.LOCAL_RULES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
     <queries>

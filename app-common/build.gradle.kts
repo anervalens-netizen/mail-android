@@ -19,6 +19,11 @@ dependencies {
     api(projects.feature.navigation.drawer.api)
 
     implementation(projects.legacy.core)
+    implementation(projects.legacy.mailstore)
+    implementation(projects.legacy.message)
+    implementation(projects.core.ui.contract)
+    implementation(projects.core.ui.theme.api)
+    implementation(libs.kotlinx.serialization.json)
     implementation(projects.legacy.ui.base)
     implementation(projects.core.android.account)
     implementation(projects.core.android.common)

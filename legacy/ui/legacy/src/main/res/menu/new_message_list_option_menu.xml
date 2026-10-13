@@ -78,6 +78,12 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/mail_local_rules"
+        android:title="@string/mail_local_rules_title"
+        app:showAsAction="never"
+        />
+
     <!-- Debug -->
 
     <item

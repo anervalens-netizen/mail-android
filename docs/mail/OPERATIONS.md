@@ -15,4 +15,4 @@ The owner's instruction is to use **Gaming** for compilations and other resource
 
 Use the existing signing key and application ID for updates and increment versionCode. Keystores, passwords, and signing properties must never enter Git. GitHub publishing credentials are not installed by this setup; the connected GitHub API can publish source changes.
 
-Mail 1.0.0's tested APK and checksum are retained in `/home/runner/Mail/releases/1.0.0`. See [verification](VERIFICATION.md) for the actual tests and their limits. Preparing this environment does not mean a full APK build has been rerun on Gaming.
+Mail 1.0.0's tested APK and checksum are retained in `/home/runner/Mail/releases/1.0.0`. See [verification](VERIFICATION.md) for the actual tests and their limits. Mail 1.1.0 was subsequently built and tested on Gaming; see [Mail 1.1 verification](VERIFICATION-1.1.md).

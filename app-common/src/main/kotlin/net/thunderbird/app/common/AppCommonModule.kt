@@ -1,5 +1,6 @@
 package net.thunderbird.app.common
 
+import com.fsck.k9.controller.ControllerExtension
 import com.fsck.k9.legacyCommonAppModules
 import com.fsck.k9.legacyCoreModules
 import com.fsck.k9.legacyUiModules
@@ -8,11 +9,14 @@ import net.thunderbird.app.common.activity.DefaultActivityProvider
 import net.thunderbird.app.common.appConfig.AndroidPlatformConfigProvider
 import net.thunderbird.app.common.core.appCommonCoreModule
 import net.thunderbird.app.common.feature.appCommonFeatureModule
+import net.thunderbird.app.common.rules.MailLocalRules
+import net.thunderbird.app.common.rules.MailRulesViewModel
 import net.thunderbird.app.common.startup.appCommonStartupModule
 import net.thunderbird.core.android.common.activity.ActivityProvider
 import net.thunderbird.core.common.appConfig.PlatformConfigProvider
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appCommonModule: Module = module {
@@ -26,6 +30,10 @@ val appCommonModule: Module = module {
         appCommonFeatureModule,
         appCommonStartupModule,
     )
+
+    single { MailLocalRules(get(), get(), get(), get(), get()) }
+    single<ControllerExtension> { get<MailLocalRules>() }
+    viewModel { MailRulesViewModel(get()) }
 
     single<PlatformConfigProvider> { AndroidPlatformConfigProvider() }
     single<ActivityProvider>(createdAtStart = true) {

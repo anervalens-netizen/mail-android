@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mail_rules_title">Foldere și reguli</string>
+    <string name="mail_rules_back">Înapoi</string>
+    <string name="mail_rules_description">Mută mesajele unui expeditor exact într-un folder local, după fiecare sincronizare POP3. Salvarea aplică regula și mesajelor aflate deja în Inbox. Copiile de pe server rămân disponibile pentru Outlook.</string>
+    <string name="mail_rules_account">Cont POP3</string>
+    <string name="mail_rules_sender">Adresa de email a expeditorului</string>
+    <string name="mail_rules_folder">Numele folderului local</string>
+    <string name="mail_rules_save">Salvează și aplică</string>
+    <string name="mail_rules_busy">Se procesează… mesajele incomplete se descarcă înainte de mutare.</string>
+    <string name="mail_rules_no_accounts">Adaugă un cont POP3 pentru a crea reguli locale.</string>
+    <string name="mail_rules_active">Reguli active</string>
+    <string name="mail_rules_rule">%1$s → %2$s</string>
+    <string name="mail_rules_remove">Oprește regula</string>
+    <string name="mail_rules_removed">Regula a fost oprită. Folderul și mesajele sale sunt păstrate.</string>
+    <string name="mail_rules_missing_folder">Folder indisponibil — salvează din nou regula</string>
+    <string name="mail_rules_invalid">Introdu o singură adresă completă de email și un nume de folder de 1–100 de caractere, fără slash-uri sau rânduri noi.</string>
+    <string name="mail_rules_folder_conflict">Acest nume aparține unui folder special sau de pe server. Alege alt nume pentru folderul local.</string>
+    <string name="mail_rules_error">Operația nu s-a putut încheia. Verifică acest cont și încearcă din nou. Regulile salvate apar la redeschiderea acestui ecran.</string>
+    <string name="mail_rules_result">Regulă salvată. Mesaje mutate: %1$d. Rămase în Inbox: %2$d (se reîncearcă la următoarea sincronizare).</string>
+    <string name="mail_rules_footer">Folderele apar în lista de foldere a contului și există doar pe acest dispozitiv. Oprirea unei reguli păstrează folderul și mesajele. Regulile sunt salvate pe acest dispozitiv și nu sunt incluse în exportul setărilor.</string>
+</resources>

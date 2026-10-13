@@ -1038,6 +1038,10 @@ open class MessageHomeActivity :
     @Suppress("NestedBlockDepth")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
+        if (id == R.id.mail_local_rules) {
+            startActivity(Intent("net.thunderbird.mail.action.LOCAL_RULES").setPackage(packageName))
+            return true
+        }
         if (id == android.R.id.home) {
             if (displayMode != DisplayMode.MESSAGE_VIEW && !isAdditionalMessageListDisplayed) {
                 if (isDrawerEnabled) {

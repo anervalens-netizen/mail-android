@@ -26,7 +26,7 @@ val legacyCommonAppModule = module {
             ),
         )
     }
-    single(named("controllerExtensions")) { emptyList<ControllerExtension>() }
+    single(named("controllerExtensions")) { getAll<ControllerExtension>() }
     single<EncryptionExtractor> { OpenPgpEncryptionExtractor.newInstance() }
     single<StoragePersister> {
         K9StoragePersister(get(), get())

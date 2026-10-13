@@ -7,6 +7,7 @@ Personal Android email client maintained by Andrei Stancu. Based on Thunderbird 
 - App name: **Mail**; Android package: `eu.astancu.mail`.
 - POP3, IMAP and SMTP with password/app-password authentication.
 - Local message search and multiple accounts are inherited from Thunderbird.
+- Mail 1.1 adds local POP3 folders and exact-sender rules for existing and future incoming messages.
 - Newly created POP3 accounts keep local messages after server deletion and default to **All messages** (no message-count limit). The setup screen lets you choose a smaller limit. Imported accounts retain their imported settings.
 - FOSS release uses the existing no-funding and no-telemetry integrations.
 - No Pro tier, in-app billing, donation prompts or Thundermail onboarding in the Mail FOSS release.
@@ -17,6 +18,20 @@ Personal Android email client maintained by Andrei Stancu. Based on Thunderbird 
 Install the signed APK from this repository's Releases. Future updates must keep the application ID and signing certificate and increase versionCode. Do not uninstall before updating: uninstalling removes local app data.
 
 Use POP3 **leave messages on server** on each receiving client if both Outlook and Mail must download the same incoming mail. Sent messages and read state are not synchronized by POP3. Configure local retention deliberately. Settings export is not a complete message backup.
+
+## Local POP3 rules
+
+Open the message list menu and choose **Folders and rules** (**Foldere și reguli** in Romanian).
+Select the POP3 account, enter a sender email address and a local folder name, then choose **Save and apply**.
+The folder is created automatically, or an existing regular local folder with the same name is reused.
+Existing Inbox messages are processed immediately; future messages are processed after each successful sync.
+Stopping a rule keeps its folder and messages. Saving the same sender again updates its destination.
+
+Rules and their folders are local to this installation; POP3 does not synchronize them to Outlook.
+The rule never deletes the server copy. Complete message data is required before moving, including attachments.
+Failed downloads stay in Inbox and are retried at the next sync. Rules are not included in settings exports.
+
+See [Mail 1.1 verification](docs/mail/VERIFICATION-1.1.md).
 
 ## Authentication scope
 
