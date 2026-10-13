@@ -504,41 +504,6 @@ open class MessageHomeActivity :
                         query,
                     ),
                 )
-                or(
-                    SearchCondition(
-                        MessageSearchField.TO,
-                        SearchAttribute.CONTAINS,
-                        query,
-                    ),
-                )
-                or(
-                    SearchCondition(
-                        MessageSearchField.CC,
-                        SearchAttribute.CONTAINS,
-                        query,
-                    ),
-                )
-                or(
-                    SearchCondition(
-                        MessageSearchField.BCC,
-                        SearchAttribute.CONTAINS,
-                        query,
-                    ),
-                )
-                or(
-                    SearchCondition(
-                        MessageSearchField.SUBJECT,
-                        SearchAttribute.CONTAINS,
-                        query,
-                    ),
-                )
-                or(
-                    SearchCondition(
-                        MessageSearchField.MESSAGE_CONTENTS,
-                        SearchAttribute.CONTAINS,
-                        query,
-                    ),
-                )
             }
 
             val appData = intent.getBundleExtra(SearchManager.APP_DATA)
@@ -1037,29 +1002,31 @@ open class MessageHomeActivity :
 
     @Suppress("NestedBlockDepth")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        if (id == R.id.mail_local_rules) {
-            startActivity(Intent("net.thunderbird.mail.action.LOCAL_RULES").setPackage(packageName))
-            return true
-        }
-        if (id == android.R.id.home) {
-            if (displayMode != DisplayMode.MESSAGE_VIEW && !isAdditionalMessageListDisplayed) {
-                if (isDrawerEnabled) {
-                    if (navigationDrawer!!.isOpen) {
-                        navigationDrawer!!.close()
+        return when (item.itemId) {
+            R.id.mail_local_rules -> {
+                startActivity(Intent("net.thunderbird.mail.action.LOCAL_RULES").setPackage(packageName))
+                true
+            }
+
+            android.R.id.home -> {
+                if (displayMode != DisplayMode.MESSAGE_VIEW && !isAdditionalMessageListDisplayed) {
+                    if (isDrawerEnabled) {
+                        if (navigationDrawer!!.isOpen) {
+                            navigationDrawer!!.close()
+                        } else {
+                            navigationDrawer!!.open()
+                        }
                     } else {
-                        navigationDrawer!!.open()
+                        finish()
                     }
                 } else {
-                    finish()
+                    goBack()
                 }
-            } else {
-                goBack()
+                true
             }
-            return true
-        }
 
-        return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun isSearchViewCollapsed(): Boolean {

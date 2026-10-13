@@ -1134,7 +1134,7 @@ class LegacyMessageListFragment :
 
         val searchView = searchItem.actionView as SearchView
         searchView.maxWidth = Int.MAX_VALUE
-        searchView.queryHint = resources.getString(R.string.search_action)
+        searchView.queryHint = resources.getString(R.string.mail_search_sender_hint)
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {

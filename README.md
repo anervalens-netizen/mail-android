@@ -19,6 +19,13 @@ Install the signed APK from this repository's Releases. Future updates must keep
 
 Use POP3 **leave messages on server** on each receiving client if both Outlook and Mail must download the same incoming mail. Sent messages and read state are not synchronized by POP3. Configure local retention deliberately. Settings export is not a complete message backup.
 
+## Sender search
+
+From Mail 1.2, the message-list search matches only the sender name and email address (the From header).
+A fragment such as `pop` matches every sender whose name or address contains that fragment.
+Matches only in To, Cc, Bcc, subject or message text are excluded.
+The current folder/account scope is retained; the existing Search everywhere action broadens the scope.
+
 ## Local POP3 rules
 
 Open the message list menu and choose **Folders and rules** (**Foldere și reguli** in Romanian).
