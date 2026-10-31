@@ -76,6 +76,36 @@ class PreferencesTest {
         assertThat(currentAccountOne.name).isEqualTo("New name")
     }
 
+    @Test
+    fun `small limits are migrated once while unlimited and later choices are preserved`() {
+        createAndSaveAccount(ACCOUNT_ID_RAW)
+        createAndSaveAccount(ACCOUNT_ID_OTHER_RAW)
+        val oldKey = "$ACCOUNT_ID_RAW.maximumAutoDownloadMessageSize"
+        val customKey = "$ACCOUNT_ID_OTHER_RAW.maximumAutoDownloadMessageSize"
+        preferences.createStorageEditor()
+            .remove("mail.autoDownloadLimit10MiBMigrated")
+            .putInt(oldKey, 131072)
+            .putInt(customKey, 5242880)
+            .commit()
+
+        preferences.loadAccounts()
+
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(10485760)
+        assertThat(preferences.getAccount(ACCOUNT_ID_OTHER_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(10485760)
+        preferences.createStorageEditor()
+            .remove("mail.autoDownloadLimit10MiBMigrated")
+            .putInt(oldKey, 0)
+            .putInt(customKey, 20971520)
+            .commit()
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(0)
+        assertThat(preferences.getAccount(ACCOUNT_ID_OTHER_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(20971520)
+
+        preferences.createStorageEditor().putInt(oldKey, 131072).commit()
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(131072)
+    }
+
     private fun createAccount(accountId: String): LegacyAccountDto {
         return LegacyAccountDto(
             uuid = accountId,

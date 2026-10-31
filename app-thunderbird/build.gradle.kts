@@ -17,8 +17,8 @@ android {
         applicationId = "eu.astancu.mail"
         testApplicationId = "eu.astancu.mail.tests"
 
-        versionCode = 10200
-        versionName = "1.2.0"
+        versionCode = 10201
+        versionName = "1.2.1"
 
         buildConfigField("String", "CLIENT_INFO_APP_NAME", "\"Mail\"")
     }

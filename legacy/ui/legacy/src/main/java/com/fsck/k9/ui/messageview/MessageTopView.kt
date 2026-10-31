@@ -86,7 +86,7 @@ class MessageTopView(
         progressText = findViewById(R.id.message_progress_text)
 
         downloadRemainderButton = findViewById(R.id.download_remainder)
-        downloadRemainderButton.visibility = GONE
+        findViewById<View>(R.id.incomplete_message_warning).visibility = GONE
 
         extraHeaderContainer = findViewById(R.id.extra_header_container)
         showPicturesButton = findViewById(R.id.show_pictures)
@@ -119,7 +119,7 @@ class MessageTopView(
     }
 
     private fun resetAndPrepareMessageView(messageViewInfo: MessageViewInfo) {
-        downloadRemainderButton.visibility = GONE
+        findViewById<View>(R.id.incomplete_message_warning).visibility = GONE
         containerView.removeAllViews()
         setShowDownloadButton(messageViewInfo)
     }
@@ -307,9 +307,9 @@ class MessageTopView(
     private fun setShowDownloadButton(messageViewInfo: MessageViewInfo) {
         if (messageViewInfo.isMessageIncomplete) {
             downloadRemainderButton.isEnabled = true
-            downloadRemainderButton.visibility = VISIBLE
+            findViewById<View>(R.id.incomplete_message_warning).visibility = VISIBLE
         } else {
-            downloadRemainderButton.visibility = GONE
+            findViewById<View>(R.id.incomplete_message_warning).visibility = GONE
         }
     }
 

@@ -115,16 +115,27 @@ the 'message view theme' setting).
 
     </com.fsck.k9.view.NonLockingScrollView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/download_remainder"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_marginHorizontal="16dp"
-        android:text="@string/message_view_download_remainder"
+    <LinearLayout
+        android:id="@+id/incomplete_message_warning"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
         android:visibility="gone"
-        android:layout_width="fill_parent"
-        tools:visibility="visible"
-        />
+        tools:visibility="visible">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/message_incomplete_warning" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/download_remainder"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/message_view_download_remainder" />
+    </LinearLayout>
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/bottom_sheet_compose_view"

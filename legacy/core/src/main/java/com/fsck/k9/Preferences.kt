@@ -84,6 +84,7 @@ class Preferences internal constructor(
 
     fun loadAccounts() {
         synchronized(accountLock) {
+            migrateAutoDownloadLimit()
             val accounts = mutableMapOf<String, LegacyAccountDto>()
             val accountsInOrder = mutableListOf<LegacyAccountDto>()
 
@@ -114,6 +115,25 @@ class Preferences internal constructor(
             this.accountsMap = accounts
             this.accountsInOrder = accountsInOrder
         }
+    }
+
+    // Raise bounded limits below 10 MiB once, preserving unlimited and future user choices.
+    private fun migrateAutoDownloadLimit() {
+        val migrationKey = "mail.autoDownloadLimit10MiBMigrated"
+        val oldDefault = 131072
+        val currentStorage = storage
+        if (currentStorage.getBoolean(migrationKey, false)) return
+
+        val editor = createStorageEditor()
+        currentStorage.getStringOrNull("accountUuids")?.split(",")?.filter { it.isNotBlank() }?.forEach { uuid ->
+            val key = "$uuid.maximumAutoDownloadMessageSize"
+            val limit = currentStorage.getInt(key, oldDefault)
+            if (limit in 1 until AccountDefaultsProvider.DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE) {
+                editor.putInt(key, AccountDefaultsProvider.DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE)
+            }
+        }
+        editor.putBoolean(migrationKey, true)
+        editor.commit()
     }
 
     override fun getAccounts(): List<LegacyAccountDto> {
