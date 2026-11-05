@@ -19,12 +19,25 @@ Install the signed APK from this repository's Releases. Future updates must keep
 
 Use POP3 **leave messages on server** on each receiving client if both Outlook and Mail must download the same incoming mail. Sent messages and read state are not synchronized by POP3. Configure local retention deliberately. Settings export is not a complete message backup.
 
-## Sender search
+## Search
 
-From Mail 1.2, the message-list search matches only the sender name and email address (the From header).
-A fragment such as `pop` matches every sender whose name or address contains that fragment.
-Matches only in To, Cc, Bcc, subject or message text are excluded.
-The current folder/account scope is retained; the existing Search everywhere action broadens the scope.
+Mail 1.3 restores general local search. The message-list search now matches sender,
+recipient, subject, and downloaded message content. To search only for sender name
+or address (Mail 1.2 behavior), use `from:popescu`.
+POP3 does not support server-side search, so only locally retained and downloaded
+messages can match. Search everywhere broadens the folder and account scope.
+
+## POP3 download retention
+
+Mail 1.3 increases the automatic per-message download threshold to **10 MiB**.
+On first launch, existing POP3 accounts still using the former **128 KiB** default
+are upgraded to 10 MiB and the new limit is saved. Custom limits and non-POP3 accounts
+are unchanged. Messages larger than 10 MiB remain partial until fetched manually.
+
+If another POP3 client deletes a message from the provider before this app downloads
+the complete MIME message, an existing partial local copy cannot fetch the missing
+attachment. Configure every client to leave messages on the server and preserve local
+backups. Do not uninstall this app: POP3 local mail can be the only remaining copy.
 
 ## Local POP3 rules
 

@@ -18,12 +18,14 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import net.thunderbird.core.android.account.AccountDefaultsProvider
+import net.thunderbird.core.android.account.AccountDefaultsProvider.Companion.DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE
 import net.thunderbird.core.android.account.AccountDefaultsProvider.Companion.UNASSIGNED_ACCOUNT_NUMBER
 import net.thunderbird.core.android.account.AccountRemovedListener
 import net.thunderbird.core.android.account.AccountsChangeListener
 import net.thunderbird.core.android.account.LegacyAccountDto
 import net.thunderbird.core.android.account.LegacyAccountDtoManager
 import net.thunderbird.core.common.exception.MessagingException
+import net.thunderbird.core.common.mail.Protocols
 import net.thunderbird.legacy.logging.Log
 import net.thunderbird.core.preference.GeneralSettingsManager
 import net.thunderbird.core.preference.storage.Storage
@@ -31,6 +33,8 @@ import net.thunderbird.core.preference.storage.StorageEditor
 import net.thunderbird.core.preference.storage.StoragePersister
 import net.thunderbird.feature.account.storage.legacy.AccountDtoStorageHandler
 import org.koin.java.KoinJavaComponent.inject
+
+private const val LEGACY_MAIL_AUTO_DOWNLOAD_MESSAGE_SIZE = 128 * 1024
 
 @Suppress("MaxLineLength", "TooManyFunctions")
 class Preferences internal constructor(
@@ -100,6 +104,16 @@ class Preferences internal constructor(
                     accounts[uuid] = account
                     accountsInOrder.add(account)
                     accountDefaultsProvider.applyOverwrites(account, storage)
+                    // Mail: upgrade the previous 128 KiB POP3 default once and persist it.
+                    // Leave non-default limits and other protocols unchanged.
+                    if (account.incomingServerSettings.type == Protocols.POP3 &&
+                        account.maximumAutoDownloadMessageSize == LEGACY_MAIL_AUTO_DOWNLOAD_MESSAGE_SIZE
+                    ) {
+                        account.maximumAutoDownloadMessageSize = DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE
+                        val editor = createStorageEditor()
+                        legacyAccountStorageHandler.save(account, storage, editor)
+                        editor.commit()
+                    }
                 }
             }
 

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mail_search_sender_hint">Search sender: name or email</string>
+    <string name="mail_search_sender_hint">Search sender, subject or message</string>
 </resources>

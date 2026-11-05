@@ -494,16 +494,30 @@ open class MessageHomeActivity :
         } else if (action == Intent.ACTION_SEARCH && queryString != null) {
             // Query was received from Search Dialog
             val query = queryString.trim()
+            val senderQuery = if (query.startsWith("from:", ignoreCase = true)) {
+                query.substringAfter(":").trim().takeIf { it.isNotEmpty() }
+            } else {
+                null
+            }
+            val searchQuery = senderQuery ?: query
+            val fields = if (senderQuery != null) {
+                listOf(MessageSearchField.SENDER)
+            } else {
+                listOf(
+                    MessageSearchField.SENDER,
+                    MessageSearchField.TO,
+                    MessageSearchField.CC,
+                    MessageSearchField.BCC,
+                    MessageSearchField.SUBJECT,
+                    MessageSearchField.MESSAGE_CONTENTS,
+                )
+            }
 
             val search = LocalMessageSearch().apply {
                 isManualSearch = true
-                or(
-                    SearchCondition(
-                        MessageSearchField.SENDER,
-                        SearchAttribute.CONTAINS,
-                        query,
-                    ),
-                )
+                fields.forEach { field ->
+                    or(SearchCondition(field, SearchAttribute.CONTAINS, searchQuery))
+                }
             }
 
             val appData = intent.getBundleExtra(SearchManager.APP_DATA)
