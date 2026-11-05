@@ -127,7 +127,7 @@ class PreferencesTest {
 
     companion object {
         private val SERVER_SETTINGS = ServerSettings(
-            type = "POP3",
+            type = "pop3",
             host = "irrelevant",
             port = 993,
             connectionSecurity = ConnectionSecurity.SSL_TLS_REQUIRED,
