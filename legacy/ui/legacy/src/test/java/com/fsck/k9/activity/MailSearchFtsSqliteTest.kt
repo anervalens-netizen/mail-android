@@ -57,6 +57,29 @@ class MailSearchFtsSqliteTest {
         }
     }
 
+    @Test
+    fun `FTS4 default tokenizer matches Unicode punctuation and combining marks`() {
+        withSearchDatabase { database ->
+            val examples = listOf("invoice–2026", "cafe\u0301", "X🙂Y")
+            examples.forEachIndexed { index, content ->
+                val messageId = index + 10
+                database.execSQL(
+                    "INSERT INTO messages_fulltext(docid, fulltext) VALUES (?, ?)",
+                    arrayOf(messageId, content),
+                )
+
+                database.rawQuery(
+                    "SELECT docid FROM messages_fulltext WHERE fulltext MATCH ?",
+                    arrayOf(requireNotNull(content.toSafeFts4MatchQuery())),
+                ).use { cursor ->
+                    assertThat(cursor.count).isEqualTo(1)
+                    assertThat(cursor.moveToFirst()).isEqualTo(true)
+                    assertThat(cursor.getInt(0)).isEqualTo(messageId)
+                }
+            }
+        }
+    }
+
     private fun withSearchDatabase(block: (SQLiteDatabase) -> Unit) {
         val database = SQLiteDatabase.create(null)
         try {
