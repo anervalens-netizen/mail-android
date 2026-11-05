@@ -106,7 +106,8 @@ class Preferences internal constructor(
                     accountDefaultsProvider.applyOverwrites(account, storage)
                     // Mail: upgrade the previous 128 KiB POP3 default once and persist it.
                     // Leave non-default limits and other protocols unchanged.
-                    if (account.incomingServerSettings.type == Protocols.POP3 &&
+                    if (account.isFinishedSetup &&
+                        account.incomingServerSettings.type == Protocols.POP3 &&
                         account.maximumAutoDownloadMessageSize == LEGACY_MAIL_AUTO_DOWNLOAD_MESSAGE_SIZE
                     ) {
                         account.maximumAutoDownloadMessageSize = DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE

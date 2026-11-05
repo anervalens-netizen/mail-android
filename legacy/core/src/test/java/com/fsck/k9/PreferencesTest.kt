@@ -65,6 +65,7 @@ class PreferencesTest {
     fun `existing POP3 account at legacy download default is migrated and persisted`() {
         val account = createAccount(ACCOUNT_ID_RAW).apply {
             maximumAutoDownloadMessageSize = 128 * 1024
+            markSetupFinished()
         }
 
         preferences.saveAccount(account)
@@ -82,12 +83,25 @@ class PreferencesTest {
     fun `existing POP3 account with custom download limit is preserved`() {
         val account = createAccount(ACCOUNT_ID_RAW).apply {
             maximumAutoDownloadMessageSize = 5 * 1024 * 1024
+            markSetupFinished()
         }
 
         preferences.saveAccount(account)
 
         assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
             .isEqualTo(5 * 1024 * 1024)
+    }
+
+    @Test
+    fun `incomplete POP3 account is not migrated`() {
+        val account = createAccount(ACCOUNT_ID_RAW).apply {
+            maximumAutoDownloadMessageSize = 128 * 1024
+        }
+
+        preferences.saveAccount(account)
+
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
     }
 
     @Test
