@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.legacy.logging)
 
     testImplementation(projects.mail.testing)
+    testImplementation(libs.mockito.kotlin)
 }
 
 codeCoverage {
