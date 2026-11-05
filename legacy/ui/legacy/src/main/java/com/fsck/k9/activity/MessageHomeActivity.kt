@@ -516,7 +516,15 @@ open class MessageHomeActivity :
             val search = LocalMessageSearch().apply {
                 isManualSearch = true
                 fields.forEach { field ->
-                    or(SearchCondition(field, SearchAttribute.CONTAINS, searchQuery))
+                    // Only the FTS MATCH argument needs escaping; header LIKE search keeps the original text.
+                    val fieldQuery = if (field == MessageSearchField.MESSAGE_CONTENTS) {
+                        searchQuery.toSafeFts4MatchQuery()
+                    } else {
+                        searchQuery
+                    }
+                    if (fieldQuery != null) {
+                        or(SearchCondition(field, SearchAttribute.CONTAINS, fieldQuery))
+                    }
                 }
             }
 

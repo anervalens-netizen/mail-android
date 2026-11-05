@@ -69,14 +69,39 @@ class PreferencesTest {
         }
 
         preferences.saveAccount(account)
+        // Simulate a setting stored by Mail 1.2, before migration markers existed.
+        preferences.createStorageEditor().apply {
+            remove(account.uuid + MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX)
+            commit()
+        }
 
+        preferences.loadAccounts()
         assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
             .isEqualTo(10 * 1024 * 1024)
+        val migrationKey = account.uuid + MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX
+        assertThat(preferences.storage.getBoolean(migrationKey, false)).isEqualTo(true)
 
+        // A manual choice made AFTER migration must survive saveAccount() and repeated reloads.
+        val migratedAccount = preferences.getAccount(ACCOUNT_ID_RAW)!!
+        migratedAccount.maximumAutoDownloadMessageSize = 128 * 1024
+        preferences.saveAccount(migratedAccount)
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
+    }
+
+    @Test
+    fun `128 KiB explicitly selected on a new POP3 account is never upgraded`() {
+        val account = createAccount(ACCOUNT_ID_RAW).apply {
+            maximumAutoDownloadMessageSize = 128 * 1024
+            markSetupFinished()
+        }
+
+        preferences.saveAccount(account)
         preferences.loadAccounts()
 
         assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
-            .isEqualTo(10 * 1024 * 1024)
+            .isEqualTo(128 * 1024)
     }
 
     @Test
@@ -90,6 +115,19 @@ class PreferencesTest {
 
         assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
             .isEqualTo(5 * 1024 * 1024)
+
+        // Legacy accounts with custom limits also get a marker, so choosing 128 KiB later sticks.
+        preferences.createStorageEditor().apply {
+            remove(account.uuid + MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX)
+            commit()
+        }
+        preferences.loadAccounts()
+        val updated = preferences.getAccount(ACCOUNT_ID_RAW)!!
+        updated.maximumAutoDownloadMessageSize = 128 * 1024
+        preferences.saveAccount(updated)
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
     }
 
     @Test
