@@ -62,6 +62,87 @@ class PreferencesTest {
     }
 
     @Test
+    fun `existing POP3 account at legacy download default is migrated and persisted`() {
+        val account = createAccount(ACCOUNT_ID_RAW).apply {
+            maximumAutoDownloadMessageSize = 128 * 1024
+            markSetupFinished()
+        }
+
+        preferences.saveAccount(account)
+        // Simulate a setting stored by Mail 1.2, before migration markers existed.
+        preferences.createStorageEditor().apply {
+            remove(account.uuid + MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX)
+            commit()
+        }
+
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(10 * 1024 * 1024)
+        val migrationKey = account.uuid + MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX
+        assertThat(preferences.storage.getBoolean(migrationKey, false)).isEqualTo(true)
+
+        // A manual choice made AFTER migration must survive saveAccount() and repeated reloads.
+        val migratedAccount = preferences.getAccount(ACCOUNT_ID_RAW)!!
+        migratedAccount.maximumAutoDownloadMessageSize = 128 * 1024
+        preferences.saveAccount(migratedAccount)
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
+    }
+
+    @Test
+    fun `128 KiB explicitly selected on a new POP3 account is never upgraded`() {
+        val account = createAccount(ACCOUNT_ID_RAW).apply {
+            maximumAutoDownloadMessageSize = 128 * 1024
+            markSetupFinished()
+        }
+
+        preferences.saveAccount(account)
+        preferences.loadAccounts()
+
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
+    }
+
+    @Test
+    fun `existing POP3 account with custom download limit is preserved`() {
+        val account = createAccount(ACCOUNT_ID_RAW).apply {
+            maximumAutoDownloadMessageSize = 5 * 1024 * 1024
+            markSetupFinished()
+        }
+
+        preferences.saveAccount(account)
+
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(5 * 1024 * 1024)
+
+        // Legacy accounts with custom limits also get a marker, so choosing 128 KiB later sticks.
+        preferences.createStorageEditor().apply {
+            remove(account.uuid + MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX)
+            commit()
+        }
+        preferences.loadAccounts()
+        val updated = preferences.getAccount(ACCOUNT_ID_RAW)!!
+        updated.maximumAutoDownloadMessageSize = 128 * 1024
+        preferences.saveAccount(updated)
+        preferences.loadAccounts()
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
+    }
+
+    @Test
+    fun `incomplete POP3 account is not migrated`() {
+        val account = createAccount(ACCOUNT_ID_RAW).apply {
+            maximumAutoDownloadMessageSize = 128 * 1024
+        }
+
+        preferences.saveAccount(account)
+
+        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize)
+            .isEqualTo(128 * 1024)
+    }
+
+    @Test
     fun `saving accounts should return updated Account instance`() {
         val account = createAccount(ACCOUNT_ID_RAW)
         preferences.saveAccount(account)
@@ -74,36 +155,6 @@ class PreferencesTest {
 
         val currentAccountOne = preferences.getAccount(ACCOUNT_ID_RAW)!!
         assertThat(currentAccountOne.name).isEqualTo("New name")
-    }
-
-    @Test
-    fun `small limits are migrated once while unlimited and later choices are preserved`() {
-        createAndSaveAccount(ACCOUNT_ID_RAW)
-        createAndSaveAccount(ACCOUNT_ID_OTHER_RAW)
-        val oldKey = "$ACCOUNT_ID_RAW.maximumAutoDownloadMessageSize"
-        val customKey = "$ACCOUNT_ID_OTHER_RAW.maximumAutoDownloadMessageSize"
-        preferences.createStorageEditor()
-            .remove("mail.autoDownloadLimit10MiBMigrated")
-            .putInt(oldKey, 131072)
-            .putInt(customKey, 5242880)
-            .commit()
-
-        preferences.loadAccounts()
-
-        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(10485760)
-        assertThat(preferences.getAccount(ACCOUNT_ID_OTHER_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(10485760)
-        preferences.createStorageEditor()
-            .remove("mail.autoDownloadLimit10MiBMigrated")
-            .putInt(oldKey, 0)
-            .putInt(customKey, 20971520)
-            .commit()
-        preferences.loadAccounts()
-        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(0)
-        assertThat(preferences.getAccount(ACCOUNT_ID_OTHER_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(20971520)
-
-        preferences.createStorageEditor().putInt(oldKey, 131072).commit()
-        preferences.loadAccounts()
-        assertThat(preferences.getAccount(ACCOUNT_ID_RAW)!!.maximumAutoDownloadMessageSize).isEqualTo(131072)
     }
 
     private fun createAccount(accountId: String): LegacyAccountDto {
@@ -128,7 +179,7 @@ class PreferencesTest {
 
     companion object {
         private val SERVER_SETTINGS = ServerSettings(
-            type = "irrelevant",
+            type = "pop3",
             host = "irrelevant",
             port = 993,
             connectionSecurity = ConnectionSecurity.SSL_TLS_REQUIRED,

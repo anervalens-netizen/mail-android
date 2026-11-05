@@ -18,12 +18,14 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import net.thunderbird.core.android.account.AccountDefaultsProvider
+import net.thunderbird.core.android.account.AccountDefaultsProvider.Companion.DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE
 import net.thunderbird.core.android.account.AccountDefaultsProvider.Companion.UNASSIGNED_ACCOUNT_NUMBER
 import net.thunderbird.core.android.account.AccountRemovedListener
 import net.thunderbird.core.android.account.AccountsChangeListener
 import net.thunderbird.core.android.account.LegacyAccountDto
 import net.thunderbird.core.android.account.LegacyAccountDtoManager
 import net.thunderbird.core.common.exception.MessagingException
+import net.thunderbird.core.common.mail.Protocols
 import net.thunderbird.legacy.logging.Log
 import net.thunderbird.core.preference.GeneralSettingsManager
 import net.thunderbird.core.preference.storage.Storage
@@ -31,6 +33,9 @@ import net.thunderbird.core.preference.storage.StorageEditor
 import net.thunderbird.core.preference.storage.StoragePersister
 import net.thunderbird.feature.account.storage.legacy.AccountDtoStorageHandler
 import org.koin.java.KoinJavaComponent.inject
+
+private const val LEGACY_MAIL_AUTO_DOWNLOAD_MESSAGE_SIZE = 128 * 1024
+internal const val MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX = ".mailPop3DownloadLimitMigrationV1"
 
 @Suppress("MaxLineLength", "TooManyFunctions")
 class Preferences internal constructor(
@@ -84,7 +89,6 @@ class Preferences internal constructor(
 
     fun loadAccounts() {
         synchronized(accountLock) {
-            migrateAutoDownloadLimit()
             val accounts = mutableMapOf<String, LegacyAccountDto>()
             val accountsInOrder = mutableListOf<LegacyAccountDto>()
 
@@ -101,6 +105,21 @@ class Preferences internal constructor(
                     accounts[uuid] = account
                     accountsInOrder.add(account)
                     accountDefaultsProvider.applyOverwrites(account, storage)
+                    // Apply the old POP3 default upgrade only once per stored account.
+                    // Record completion even for custom limits so a later user choice of 128 KiB is respected.
+                    val migrationKey = "$uuid$MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX"
+                    if (!storage.getBoolean(migrationKey, false)) {
+                        val editor = createStorageEditor()
+                        if (account.isFinishedSetup &&
+                            account.incomingServerSettings.type == Protocols.POP3 &&
+                            account.maximumAutoDownloadMessageSize == LEGACY_MAIL_AUTO_DOWNLOAD_MESSAGE_SIZE
+                        ) {
+                            account.maximumAutoDownloadMessageSize = DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE
+                            legacyAccountStorageHandler.save(account, storage, editor)
+                        }
+                        editor.putBoolean(migrationKey, true)
+                        editor.commit()
+                    }
                 }
             }
 
@@ -115,25 +134,6 @@ class Preferences internal constructor(
             this.accountsMap = accounts
             this.accountsInOrder = accountsInOrder
         }
-    }
-
-    // Raise bounded limits below 10 MiB once, preserving unlimited and future user choices.
-    private fun migrateAutoDownloadLimit() {
-        val migrationKey = "mail.autoDownloadLimit10MiBMigrated"
-        val oldDefault = 131072
-        val currentStorage = storage
-        if (currentStorage.getBoolean(migrationKey, false)) return
-
-        val editor = createStorageEditor()
-        currentStorage.getStringOrNull("accountUuids")?.split(",")?.filter { it.isNotBlank() }?.forEach { uuid ->
-            val key = "$uuid.maximumAutoDownloadMessageSize"
-            val limit = currentStorage.getInt(key, oldDefault)
-            if (limit in 1 until AccountDefaultsProvider.DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE) {
-                editor.putInt(key, AccountDefaultsProvider.DEFAULT_MAXIMUM_AUTO_DOWNLOAD_MESSAGE_SIZE)
-            }
-        }
-        editor.putBoolean(migrationKey, true)
-        editor.commit()
     }
 
     override fun getAccounts(): List<LegacyAccountDto> {
@@ -229,6 +229,7 @@ class Preferences internal constructor(
 
             val storageEditor = createStorageEditor()
             legacyAccountStorageHandler.delete(account, storage, storageEditor)
+            storageEditor.remove("${account.uuid}$MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX")
             storageEditor.commit()
 
             if (account === newAccount) {
@@ -250,6 +251,8 @@ class Preferences internal constructor(
         synchronized(accountLock) {
             val editor = createStorageEditor()
             legacyAccountStorageHandler.save(account, storage, editor)
+            // New and explicitly edited accounts are already configured by the user.
+            editor.putBoolean("${account.uuid}$MAIL_POP3_DOWNLOAD_LIMIT_MIGRATION_KEY_SUFFIX", true)
             editor.commit()
 
             loadAccounts()
