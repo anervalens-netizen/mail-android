@@ -65,7 +65,7 @@ class MailSearchFtsSqliteTest {
                 val messageId = index + 10
                 database.execSQL(
                     "INSERT INTO messages_fulltext(docid, fulltext) VALUES (?, ?)",
-                    arrayOf(messageId, content),
+                    arrayOf<Any>(messageId, content),
                 )
 
                 database.rawQuery(
